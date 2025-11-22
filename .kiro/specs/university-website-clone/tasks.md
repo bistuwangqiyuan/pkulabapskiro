@@ -1,42 +1,46 @@
 # Implementation Plan
 
-- [ ] 1. Set up database connection and schema
-- [ ] 1.1 Install Neon database client package
+- [x] 1. Set up database connection and schema
+
+- [x] 1.1 Install Neon database client package
 
   - Install @neondatabase/serverless package
   - Update package.json dependencies
   - _Requirements: 3.1_
 
-- [ ] 1.2 Create database connection utility
+- [x] 1.2 Create database connection utility
 
   - Create src/lib/db.ts with connection functions
   - Implement query and queryOne helper functions
   - Add error handling for database operations
   - _Requirements: 3.1, 3.5_
 
-- [ ] 1.3 Create database initialization script
+- [x] 1.3 Create database initialization script
 
   - Write SQL schema for news, faculty, page_content, and navigation tables
   - Create migration script to initialize database
   - Add indexes for performance optimization
   - _Requirements: 3.2_
 
-- [ ] 1.4 Write unit tests for database utilities
+- [x] 1.4 Write unit tests for database utilities
 
   - Test connection establishment
   - Test query execution
   - Test error handling
   - _Requirements: 3.1, 3.5_
 
+-
+
 - [ ] 2. Implement core layout components
-- [ ] 2.1 Create BaseLayout component
+
+- [x] 2.1 Create BaseLayout component
 
   - Implement BaseLayout.astro with HTML structure
   - Add meta tags, title, and global styles
   - Include Header and Footer components
   - _Requirements: 1.3, 9.1_
 
-- [ ] 2.2 Create Header component with navigation
+- [-] 2.2 Create Header component with navigation
 
   - Implement Header.astro with logo and navigation menu
   - Add responsive mobile menu (hamburger)
@@ -77,6 +81,7 @@
   - _Requirements: 1.3_
 
 - [ ] 3. Set up styling system
+
 - [ ] 3.1 Configure Tailwind CSS with BISTU theme
 
   - Create custom color palette in Tailwind config
@@ -92,6 +97,7 @@
   - _Requirements: 2.1, 2.2, 2.5_
 
 - [ ] 4. Implement news functionality
+
 - [ ] 4.1 Create news data access layer
 
   - Implement src/lib/news.ts with CRUD functions
@@ -142,6 +148,7 @@
   - _Requirements: 4.1, 4.2, 4.4, 4.5_
 
 - [ ] 5. Implement faculty functionality
+
 - [ ] 5.1 Create faculty data access layer
 
   - Implement src/lib/faculty.ts with CRUD functions
@@ -197,6 +204,7 @@
   - _Requirements: 5.1, 5.2, 5.4, 5.5_
 
 - [ ] 6. Implement page content management
+
 - [ ] 6.1 Create page content data access layer
 
   - Implement src/lib/content.ts with functions
@@ -227,6 +235,7 @@
   - _Requirements: 3.4_
 
 - [ ] 7. Implement experimental teaching section
+
 - [ ] 7.1 Create teaching content data access layer
 
   - Implement src/lib/teaching.ts with functions
@@ -267,6 +276,7 @@
   - _Requirements: 6.1, 6.3, 6.4, 6.5_
 
 - [ ] 8. Implement homepage
+
 - [ ] 8.1 Create homepage layout
 
   - Implement src/pages/index.astro
@@ -283,6 +293,7 @@
   - _Requirements: 1.1, 4.1_
 
 - [ ] 9. Implement utility components
+
 - [ ] 9.1 Create ImageOptimizer component
 
   - Implement ImageOptimizer.astro with Astro Image
@@ -306,6 +317,7 @@
   - _Requirements: 4.5_
 
 - [ ] 10. Implement API endpoints
+
 - [ ] 10.1 Create news API endpoints
 
   - Implement src/pages/api/news/index.ts (GET, POST)
@@ -351,6 +363,7 @@
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
 - [ ] 11. Implement accessibility features
+
 - [ ] 11.1 Write property test for semantic HTML
 
   - **Property 17: Semantic HTML usage**
@@ -391,6 +404,7 @@
   - _Requirements: 9.1, 9.2, 9.4, 9.5_
 
 - [ ] 12. Configure deployment
+
 - [ ] 12.1 Create Netlify configuration
 
   - Create netlify.toml with build settings
@@ -420,6 +434,7 @@
   - _Requirements: 8.1, 8.5_
 
 - [ ] 13. Create seed data script
+
 - [ ] 13.1 Create database seeding script
 
   - Write script to populate initial navigation structure
@@ -435,6 +450,7 @@
   - _Requirements: 3.3_
 
 - [ ] 14. Add 404 and error pages
+
 - [ ] 14.1 Create custom 404 page
 
   - Implement src/pages/404.astro
@@ -449,6 +465,7 @@
   - _Requirements: 3.5_
 
 - [ ] 15. Final checkpoint - Ensure all tests pass
+
   - Run all unit tests and property-based tests
   - Fix any failing tests
   - Verify build succeeds

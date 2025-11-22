@@ -31,7 +31,7 @@
 
 -
 
-- [ ] 2. Implement core layout components
+- [x] 2. Implement core layout components
 
 - [x] 2.1 Create BaseLayout component
 
@@ -40,77 +40,77 @@
   - Include Header and Footer components
   - _Requirements: 1.3, 9.1_
 
-- [-] 2.2 Create Header component with navigation
+- [x] 2.2 Create Header component with navigation
 
   - Implement Header.astro with logo and navigation menu
   - Add responsive mobile menu (hamburger)
   - Fetch navigation structure from database
   - _Requirements: 1.1, 1.2, 1.4, 2.3_
 
-- [ ] 2.3 Write property test for navigation consistency
+- [x] 2.3 Write property test for navigation consistency
 
   - **Property 1: Navigation consistency across pages**
   - **Validates: Requirements 1.3**
 
-- [ ] 2.4 Write property test for responsive navigation
+- [x] 2.4 Write property test for responsive navigation
 
   - **Property 2: Responsive navigation adaptation**
   - **Validates: Requirements 1.4**
 
-- [ ] 2.5 Create Footer component
+- [x] 2.5 Create Footer component
 
   - Implement Footer.astro with copyright and contact info
   - Add links and social media icons
   - _Requirements: 1.3_
 
-- [ ] 2.6 Create Sidebar component
+- [x] 2.6 Create Sidebar component
 
   - Implement Sidebar.astro for secondary navigation
   - Support hierarchical menu structure
   - _Requirements: 1.2, 1.5_
 
-- [ ] 2.7 Write property test for navigation hierarchy
+- [x] 2.7 Write property test for navigation hierarchy
 
   - **Property 3: Navigation hierarchy preservation**
   - **Validates: Requirements 1.5**
 
-- [ ] 2.8 Create Breadcrumb component
+- [x] 2.8 Create Breadcrumb component
 
   - Implement Breadcrumb.astro for navigation trail
   - Generate breadcrumbs based on current path
   - _Requirements: 1.3_
 
-- [ ] 3. Set up styling system
+- [x] 3. Set up styling system
 
-- [ ] 3.1 Configure Tailwind CSS with BISTU theme
+- [x] 3.1 Configure Tailwind CSS with BISTU theme
 
   - Create custom color palette in Tailwind config
   - Define typography settings
   - Set up responsive breakpoints
   - _Requirements: 2.1, 2.2_
 
-- [ ] 3.2 Create global styles
+- [x] 3.2 Create global styles
 
   - Implement src/styles/globals.css with base styles
   - Add CSS custom properties for colors and fonts
   - Define reusable utility classes
   - _Requirements: 2.1, 2.2, 2.5_
 
-- [ ] 4. Implement news functionality
+- [-] 4. Implement news functionality
 
-- [ ] 4.1 Create news data access layer
+- [x] 4.1 Create news data access layer
 
   - Implement src/lib/news.ts with CRUD functions
   - Add getNewsList, getNewsById, createNews, updateNews, deleteNews
   - Implement pagination logic
   - _Requirements: 4.3, 4.4, 4.5_
 
-- [ ] 4.2 Write property test for news retrieval
+- [x] 4.2 Write property test for news retrieval
 
   - **Property 6: News retrieval consistency**
   - **Validates: Requirements 4.3**
 
-- [ ] 4.3 Write property test for news ordering
+- [-] 4.3 Write property test for news ordering
 
   - **Property 7: News chronological ordering**
   - **Validates: Requirements 4.4**

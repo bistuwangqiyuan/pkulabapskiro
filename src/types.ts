@@ -29,3 +29,25 @@ export interface BreadcrumbItem {
     label: string;
     url?: string;
 }
+
+export interface NewsItem {
+    id: number;
+    title: string;
+    slug: string;
+    summary?: string;
+    content: string;
+    thumbnailUrl?: string;
+    author?: string;
+    category?: string;
+    publishedAt: Date;
+    updatedAt: Date;
+    isPublished: boolean;
+    viewCount: number;
+    tags?: string[];
+}
+
+export interface PaginationParams {
+    page: number;
+    pageSize: number;
+    total: number;
+}

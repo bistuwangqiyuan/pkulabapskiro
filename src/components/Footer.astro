@@ -1,9 +1,65 @@
 ---
-
+const currentYear = new Date().getFullYear();
 ---
 
-<footer class="pt-16 pb-12 sm:pt-24 sm:pb-16">
-    <p class="text-sm">
-        <a href="https://docs.netlify.com/frameworks/astro/" class="decoration-dashed text-primary underline-offset-8"> Astro on Netlify </a>
-    </p>
+<footer class="bg-gray-800 text-gray-300 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Contact Information -->
+            <div>
+                <h3 class="text-white text-lg font-semibold mb-4">联系我们</h3>
+                <ul class="space-y-2 text-sm">
+                    <li>地址：北京市海淀区清河小营东路12号</li>
+                    <li>邮编：100192</li>
+                    <li>电话：010-82426912</li>
+                    <li>邮箱：jsjxy@bistu.edu.cn</li>
+                </ul>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-white text-lg font-semibold mb-4">快速链接</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="https://www.bistu.edu.cn" class="hover:text-white transition-colors no-underline">北京信息科技大学</a></li>
+                    <li><a href="/about" class="hover:text-white transition-colors no-underline">中心概况</a></li>
+                    <li><a href="/teaching" class="hover:text-white transition-colors no-underline">实验教学</a></li>
+                    <li><a href="/faculty" class="hover:text-white transition-colors no-underline">师资队伍</a></li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div>
+                <h3 class="text-white text-lg font-semibold mb-4">关注我们</h3>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-white transition-colors no-underline" aria-label="微信公众号">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M8.5 12c0 .83-.67 1.5-1.5 1.5S5.5 12.83 5.5 12s.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm7.5-1.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"
+                            ></path>
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                            ></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="hover:text-white transition-colors no-underline" aria-label="微博">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                            ></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm">
+            <p>&copy; {currentYear} 北京信息科技大学计算机学院. 保留所有权利.</p>
+            <p class="mt-2">
+                <a href="/privacy" class="hover:text-white transition-colors no-underline">隐私政策</a>
+                <span class="mx-2">|</span>
+                <a href="/terms" class="hover:text-white transition-colors no-underline">使用条款</a>
+            </p>
+        </div>
+    </div>
 </footer>

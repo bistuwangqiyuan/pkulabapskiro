@@ -1,0 +1,86 @@
+---
+import type { NavItem } from '../types';
+
+interface Props {
+    items: NavItem[];
+    currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+
+// Function to check if a path is active
+function isActive(itemUrl: string, currentPath: string): boolean {
+    if (itemUrl === currentPath) return true;
+    if (itemUrl !== '/' && currentPath.startsWith(itemUrl)) return true;
+    return false;
+}
+
+// Function to check if any child is active
+function hasActiveChild(item: NavItem, currentPath: string): boolean {
+    if (!item.children || item.children.length === 0) return false;
+    return item.children.some((child) => isActive(child.url, currentPath) || hasActiveChild(child, currentPath));
+}
+---
+
+<aside class="w-full md:w-64 bg-gray-50 border-r border-gray-200 p-4">
+    <nav class="space-y-1" aria-label="侧边栏导航">
+        {
+            items.map((item) => {
+                const itemActive = isActive(item.url, currentPath);
+                const hasChildren = item.children && item.children.length > 0;
+                const childActive = hasActiveChild(item, currentPath);
+                const expanded = itemActive || childActive;
+
+                return (
+                    <div class="sidebar-item">
+                        <a
+                            href={item.url}
+                            class={`flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md no-underline transition-colors ${
+                                itemActive ? 'bg-[#0066cc] text-white' : 'text-gray-700 hover:bg-gray-200'
+                            }`}
+                            aria-current={itemActive ? 'page' : undefined}
+                        >
+                            <span class="flex items-center">
+                                {item.icon && (
+                                    <span class="mr-2" aria-hidden="true">
+                                        {item.icon}
+                                    </span>
+                                )}
+                                {item.label}
+                            </span>
+                            {hasChildren && (
+                                <svg
+                                    class={`w-4 h-4 transition-transform ${expanded ? 'rotate-90' : ''}`}
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            )}
+                        </a>
+
+                        {hasChildren && expanded && (
+                            <div class="ml-4 mt-1 space-y-1">
+                                {item.children!.map((child) => {
+                                    const childItemActive = isActive(child.url, currentPath);
+                                    return (
+                                        <a
+                                            href={child.url}
+                                            class={`block px-3 py-2 text-sm rounded-md no-underline transition-colors ${
+                                                childItemActive ? 'bg-[#0066cc] text-white' : 'text-gray-600 hover:bg-gray-200'
+                                            }`}
+                                            aria-current={childItemActive ? 'page' : undefined}
+                                        >
+                                            {child.label}
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                );
+            })
+        }
+    </nav>
+</aside>

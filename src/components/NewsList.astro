@@ -1,0 +1,65 @@
+---
+import NewsCard from './NewsCard.astro';
+import Pagination from './Pagination.astro';
+import type { NewsItem } from '../types';
+
+interface Props {
+    news: NewsItem[];
+    currentPage: number;
+    totalPages: number;
+    baseUrl?: string;
+}
+
+const { news, currentPage, totalPages, baseUrl = '/news' } = Astro.props;
+---
+
+<div class="news-list">
+    {
+        news.length === 0 ? (
+            <div class="news-list-empty">
+                <p>暂无新闻</p>
+            </div>
+        ) : (
+            <>
+                <div class="news-grid">
+                    {news.map((item) => (
+                        <NewsCard news={item} />
+                    ))}
+                </div>
+
+                {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={baseUrl} />}
+            </>
+        )
+    }
+</div>
+
+<style>
+    .news-list {
+        width: 100%;
+    }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .news-list-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-secondary, #666);
+    }
+
+    .news-list-empty p {
+        font-size: 1.125rem;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .news-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+</style>

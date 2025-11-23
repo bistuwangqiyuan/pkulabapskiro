@@ -51,3 +51,84 @@ export interface PaginationParams {
     pageSize: number;
     total: number;
 }
+
+export interface FacultyMember {
+    id: number;
+    name: string;
+    nameEn?: string;
+    title: string;
+    category: string;
+    photoUrl?: string;
+    email?: string;
+    phone?: string;
+    office?: string;
+    researchInterests?: string[];
+    education?: string;
+    biography?: string;
+    publications?: string;
+    projects?: string;
+    awards?: string;
+    sortOrder: number;
+    isVisible: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface PageContent {
+    id: number;
+    slug: string;
+    title: string;
+    content: string;
+    metaDescription?: string;
+    metaKeywords?: string;
+    sidebarContent?: string;
+    updatedAt: Date;
+    updatedBy?: string;
+}
+
+export interface Course {
+    id: number;
+    name: string;
+    description: string;
+    schedule: string;
+    instructor: string;
+    credits?: number;
+    semester?: string;
+    prerequisites?: string;
+    objectives?: string;
+    sortOrder: number;
+    isVisible: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Laboratory {
+    id: number;
+    name: string;
+    location: string;
+    equipment: string;
+    openingHours: string;
+    capacity?: number;
+    description?: string;
+    manager?: string;
+    contactInfo?: string;
+    sortOrder: number;
+    isVisible: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Resource {
+    id: number;
+    title: string;
+    description?: string;
+    downloadUrl: string;
+    fileType?: string;
+    fileSize?: string;
+    category?: string;
+    courseId?: number;
+    sortOrder: number;
+    isVisible: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}

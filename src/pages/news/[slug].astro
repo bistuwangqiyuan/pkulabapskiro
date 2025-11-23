@@ -1,0 +1,311 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getNewsBySlug, incrementViewCount } from '../../lib/news';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+    return Astro.redirect('/news');
+}
+
+// Fetch news article
+let news;
+let error = null;
+
+try {
+    news = await getNewsBySlug(slug);
+
+    if (!news) {
+        return Astro.redirect('/404');
+    }
+
+    // Increment view count
+    await incrementViewCount(news.id);
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load news article';
+}
+
+// Format date for display
+const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+};
+
+// Parse markdown content
+const contentHtml = news ? marked(news.content) : '';
+
+// Breadcrumb items
+const breadcrumbItems = [{ label: '首页', url: '/' }, { label: '新闻动态', url: '/news' }, { label: news?.title || '新闻详情' }];
+---
+
+<BaseLayout
+    title={news ? `${news.title} - 北京信息科技大学计算机学院` : '新闻详情'}
+    description={news?.summary || '查看新闻详情'}
+    keywords={news?.tags?.join(',') || '新闻,学院动态'}
+>
+    <div class="news-detail-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            {
+                error ? (
+                    <div class="error-message">
+                        <p>加载新闻时出错：{error}</p>
+                    </div>
+                ) : (
+                    news && (
+                        <article class="news-article">
+                            <header class="news-header">
+                                <h1 class="news-title">{news.title}</h1>
+
+                                <div class="news-meta">
+                                    <time datetime={news.publishedAt.toISOString()}>发布时间：{formatDate(news.publishedAt)}</time>
+                                    {news.author && <span class="news-author">作者：{news.author}</span>}
+                                    {news.category && <span class="news-category">{news.category}</span>}
+                                    <span class="news-views">浏览：{news.viewCount + 1}</span>
+                                </div>
+                            </header>
+
+                            {news.thumbnailUrl && (
+                                <div class="news-thumbnail">
+                                    <img src={news.thumbnailUrl} alt={news.title} />
+                                </div>
+                            )}
+
+                            <div class="news-content" set:html={contentHtml} />
+
+                            {news.tags && news.tags.length > 0 && (
+                                <div class="news-tags">
+                                    <span class="tags-label">标签：</span>
+                                    {news.tags.map((tag) => (
+                                        <span class="tag">{tag}</span>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div class="news-actions">
+                                <a href="/news" class="back-link">
+                                    ← 返回新闻列表
+                                </a>
+                            </div>
+                        </article>
+                    )
+                )
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .news-detail-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .news-article {
+        background: var(--background);
+        padding: 2rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .news-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .news-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        line-height: 1.3;
+    }
+
+    .news-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .news-category {
+        padding: 0.25rem 0.75rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+
+    .news-thumbnail {
+        margin: 2rem 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .news-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .news-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: var(--text-primary);
+        margin: 2rem 0;
+    }
+
+    .news-content :global(h2) {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem 0;
+        color: var(--text-primary);
+    }
+
+    .news-content :global(h3) {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        color: var(--text-primary);
+    }
+
+    .news-content :global(p) {
+        margin: 1rem 0;
+    }
+
+    .news-content :global(img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 1.5rem 0;
+    }
+
+    .news-content :global(ul),
+    .news-content :global(ol) {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+
+    .news-content :global(li) {
+        margin: 0.5rem 0;
+    }
+
+    .news-content :global(blockquote) {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    .news-content :global(code) {
+        background: var(--background-alt);
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+        font-family: 'Courier New', monospace;
+    }
+
+    .news-content :global(pre) {
+        background: var(--background-alt);
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+
+    .news-content :global(pre code) {
+        background: none;
+        padding: 0;
+    }
+
+    .news-tags {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 2rem 0;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .tags-label {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .tag {
+        padding: 0.25rem 0.75rem;
+        background: var(--background-alt);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+
+    .news-actions {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+        color: var(--secondary-color);
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+        margin-top: 2rem;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .news-article {
+            padding: 1.5rem;
+        }
+
+        .news-title {
+            font-size: 1.5rem;
+        }
+
+        .news-meta {
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .news-content {
+            font-size: 1rem;
+        }
+    }
+</style>

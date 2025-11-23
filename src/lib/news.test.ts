@@ -26,6 +26,167 @@ describe('News Data Access Layer', () => {
     vi.clearAllMocks();
   });
 
+  describe('Unit Tests', () => {
+    it('should get news list with pagination', async () => {
+      const { query, queryOne } = await import('./db');
+      const { getNewsList } = await import('./news');
+      
+      const mockNews = [
+        {
+          id: 1,
+          title: 'Test News 1',
+          slug: 'test-news-1',
+          content: 'Content 1',
+          publishedAt: new Date(),
+          updatedAt: new Date(),
+          isPublished: true,
+          viewCount: 0
+        }
+      ];
+      
+      vi.mocked(query).mockResolvedValueOnce(mockNews);
+      vi.mocked(queryOne).mockResolvedValueOnce({ count: '1' });
+      
+      const result = await getNewsList(1, 10);
+      
+      expect(result.items).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.items[0].title).toBe('Test News 1');
+    });
+
+    it('should get news by ID', async () => {
+      const { queryOne } = await import('./db');
+      const { getNewsById } = await import('./news');
+      
+      const mockNews = {
+        id: 1,
+        title: 'Test News',
+        slug: 'test-news',
+        content: 'Test content',
+        publishedAt: new Date(),
+        updatedAt: new Date(),
+        isPublished: true,
+        viewCount: 0
+      };
+      
+      vi.mocked(queryOne).mockResolvedValueOnce(mockNews);
+      
+      const result = await getNewsById(1);
+      
+      expect(result).not.toBeNull();
+      expect(result?.title).toBe('Test News');
+    });
+
+    it('should return null for non-existent news', async () => {
+      const { queryOne } = await import('./db');
+      const { getNewsById } = await import('./news');
+      
+      vi.mocked(queryOne).mockResolvedValueOnce(null);
+      
+      const result = await getNewsById(999);
+      
+      expect(result).toBeNull();
+    });
+
+    it('should create news article', async () => {
+      const { queryOne } = await import('./db');
+      const { createNews } = await import('./news');
+      
+      const newsData = {
+        title: 'New Article',
+        slug: 'new-article',
+        content: 'Article content',
+        isPublished: true
+      };
+      
+      const mockCreated = {
+        id: 1,
+        ...newsData,
+        publishedAt: new Date(),
+        updatedAt: new Date(),
+        viewCount: 0
+      };
+      
+      vi.mocked(queryOne).mockResolvedValueOnce(mockCreated);
+      
+      const result = await createNews(newsData);
+      
+      expect(result.id).toBe(1);
+      expect(result.title).toBe('New Article');
+    });
+
+    it('should update news article', async () => {
+      const { queryOne } = await import('./db');
+      const { updateNews } = await import('./news');
+      
+      const mockUpdated = {
+        id: 1,
+        title: 'Updated Title',
+        slug: 'test-news',
+        content: 'Test content',
+        publishedAt: new Date(),
+        updatedAt: new Date(),
+        isPublished: true,
+        viewCount: 0
+      };
+      
+      vi.mocked(queryOne).mockResolvedValueOnce(mockUpdated);
+      
+      const result = await updateNews(1, { title: 'Updated Title' });
+      
+      expect(result?.title).toBe('Updated Title');
+    });
+
+    it('should delete news article', async () => {
+      const { queryOne } = await import('./db');
+      const { deleteNews } = await import('./news');
+      
+      vi.mocked(queryOne).mockResolvedValueOnce({ id: 1 });
+      
+      const result = await deleteNews(1);
+      
+      expect(result).toBe(true);
+    });
+
+    it('should return false when deleting non-existent news', async () => {
+      const { queryOne } = await import('./db');
+      const { deleteNews } = await import('./news');
+      
+      vi.mocked(queryOne).mockResolvedValueOnce(null);
+      
+      const result = await deleteNews(999);
+      
+      expect(result).toBe(false);
+    });
+
+    it('should filter news by category', async () => {
+      const { query, queryOne } = await import('./db');
+      const { getNewsList } = await import('./news');
+      
+      const mockNews = [
+        {
+          id: 1,
+          title: 'Research News',
+          slug: 'research-news',
+          content: 'Content',
+          category: 'research',
+          publishedAt: new Date(),
+          updatedAt: new Date(),
+          isPublished: true,
+          viewCount: 0
+        }
+      ];
+      
+      vi.mocked(query).mockResolvedValueOnce(mockNews);
+      vi.mocked(queryOne).mockResolvedValueOnce({ count: '1' });
+      
+      const result = await getNewsList(1, 10, 'research');
+      
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].category).toBe('research');
+    });
+  });
+
   describe('Property Tests', () => {
     // Feature: university-website-clone, Property 6: News retrieval consistency
     // Validates: Requirements 4.3

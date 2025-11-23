@@ -1,0 +1,101 @@
+---
+/**
+ * MarkdownRenderer component
+ * Renders markdown content with syntax highlighting using marked and marked-shiki
+ * Requirements: 3.4
+ */
+import { Marked } from 'marked';
+import markedShiki from 'marked-shiki';
+import { highlighterPromise } from '../utils/highlighter';
+
+interface Props {
+    content: string;
+    class?: string;
+}
+
+const { content, class: className } = Astro.props;
+
+const highlighter = await highlighterPromise;
+const html = await new Marked()
+    .use(
+        markedShiki({
+            highlight(code, lang, props) {
+                return highlighter.codeToHtml(code, {
+                    lang,
+                    theme: 'min-dark'
+                });
+            }
+        })
+    )
+    .parse(content);
+---
+
+<div class:list={['markdown-content', className]} set:html={html} />
+
+<style>
+    .markdown-content {
+        @apply prose prose-slate max-w-none;
+    }
+
+    .markdown-content :global(h1) {
+        @apply text-3xl font-bold mb-4 mt-8;
+    }
+
+    .markdown-content :global(h2) {
+        @apply text-2xl font-bold mb-3 mt-6;
+    }
+
+    .markdown-content :global(h3) {
+        @apply text-xl font-semibold mb-2 mt-4;
+    }
+
+    .markdown-content :global(p) {
+        @apply mb-4 leading-relaxed;
+    }
+
+    .markdown-content :global(ul),
+    .markdown-content :global(ol) {
+        @apply mb-4 ml-6;
+    }
+
+    .markdown-content :global(li) {
+        @apply mb-2;
+    }
+
+    .markdown-content :global(a) {
+        @apply text-blue-600 hover:text-blue-800 underline;
+    }
+
+    .markdown-content :global(code) {
+        @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+    }
+
+    .markdown-content :global(pre) {
+        @apply mb-4 rounded-lg overflow-x-auto;
+    }
+
+    .markdown-content :global(pre code) {
+        @apply bg-transparent p-0;
+    }
+
+    .markdown-content :global(blockquote) {
+        @apply border-l-4 border-gray-300 pl-4 italic my-4;
+    }
+
+    .markdown-content :global(img) {
+        @apply max-w-full h-auto rounded-lg my-4;
+    }
+
+    .markdown-content :global(table) {
+        @apply w-full border-collapse mb-4;
+    }
+
+    .markdown-content :global(th),
+    .markdown-content :global(td) {
+        @apply border border-gray-300 px-4 py-2;
+    }
+
+    .markdown-content :global(th) {
+        @apply bg-gray-100 font-semibold;
+    }
+</style>

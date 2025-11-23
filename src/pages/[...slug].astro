@@ -1,0 +1,246 @@
+---
+/**
+ * Dynamic content page with catch-all routing
+ * Fetches content from database based on slug and renders with optional sidebar
+ * Requirements: 3.4
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Sidebar from '../components/Sidebar.astro';
+import MarkdownRenderer from '../components/MarkdownRenderer.astro';
+import { getPageContent } from '../lib/content';
+import { getNavigationStructure } from '../lib/navigation';
+import type { BreadcrumbItem } from '../types';
+
+const { slug } = Astro.params;
+
+// Convert slug to path
+const slugPath = slug || 'home';
+
+// Fetch page content
+let pageContent;
+let error = null;
+
+try {
+    pageContent = await getPageContent(slugPath);
+
+    if (!pageContent) {
+        return Astro.redirect('/404');
+    }
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load page content';
+}
+
+// Generate breadcrumb items from slug
+const generateBreadcrumbs = (slug: string): BreadcrumbItem[] => {
+    const items: BreadcrumbItem[] = [{ label: '首页', url: '/' }];
+
+    if (slug && slug !== 'home') {
+        const parts = slug.split('/');
+        let currentPath = '';
+
+        parts.forEach((part, index) => {
+            currentPath += (currentPath ? '/' : '') + part;
+            const isLast = index === parts.length - 1;
+
+            items.push({
+                label: part.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+                url: isLast ? undefined : `/${currentPath}`
+            });
+        });
+    }
+
+    // Override last item with actual page title if available
+    if (pageContent && items.length > 1) {
+        items[items.length - 1].label = pageContent.title;
+    }
+
+    return items;
+};
+
+const breadcrumbItems = generateBreadcrumbs(slugPath);
+
+// Fetch navigation for sidebar if sidebar content is specified
+let sidebarItems = null;
+if (pageContent?.sidebarContent) {
+    try {
+        const navTree = await getNavigationStructure();
+        // Filter navigation items based on sidebar content configuration
+        // For now, we'll show all navigation items
+        sidebarItems = navTree;
+    } catch (e) {
+        console.error('Failed to load sidebar navigation:', e);
+    }
+}
+
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout
+    title={pageContent ? `${pageContent.title} - 北京信息科技大学计算机学院` : '页面'}
+    description={pageContent?.metaDescription || '北京信息科技大学计算机学院'}
+    keywords={pageContent?.metaKeywords || '北京信息科技大学,计算机学院'}
+>
+    <div class="content-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            {
+                error ? (
+                    <div class="error-message">
+                        <p>加载页面时出错：{error}</p>
+                    </div>
+                ) : (
+                    pageContent && (
+                        <div class="content-layout">
+                            {sidebarItems && sidebarItems.length > 0 && (
+                                <div class="sidebar-container">
+                                    <Sidebar items={sidebarItems} currentPath={currentPath} />
+                                </div>
+                            )}
+
+                            <div class="main-content">
+                                <article class="page-article">
+                                    <header class="page-header">
+                                        <h1 class="page-title">{pageContent.title}</h1>
+                                        {pageContent.updatedAt && (
+                                            <div class="page-meta">
+                                                <time datetime={pageContent.updatedAt.toISOString()}>
+                                                    更新时间：
+                                                    {new Date(pageContent.updatedAt).toLocaleDateString('zh-CN', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    })}
+                                                </time>
+                                                {pageContent.updatedBy && <span class="page-author">更新者：{pageContent.updatedBy}</span>}
+                                            </div>
+                                        )}
+                                    </header>
+
+                                    <div class="page-content">
+                                        <MarkdownRenderer content={pageContent.content} />
+                                    </div>
+
+                                    {pageContent.sidebarContent && !sidebarItems && (
+                                        <aside class="inline-sidebar">
+                                            <MarkdownRenderer content={pageContent.sidebarContent} />
+                                        </aside>
+                                    )}
+                                </article>
+                            </div>
+                        </div>
+                    )
+                )
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .content-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .content-layout {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .sidebar-container {
+        flex-shrink: 0;
+    }
+
+    .main-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-article {
+        background: var(--background);
+        padding: 2rem;
+        border-radius: 8px;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        line-height: 1.3;
+    }
+
+    .page-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .page-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: var(--text-primary);
+    }
+
+    .inline-sidebar {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--background-alt);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+        margin-top: 2rem;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .content-layout {
+            flex-direction: column;
+        }
+
+        .page-article {
+            padding: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .page-meta {
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .page-content {
+            font-size: 1rem;
+        }
+    }
+</style>

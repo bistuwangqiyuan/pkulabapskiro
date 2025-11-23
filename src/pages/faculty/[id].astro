@@ -1,0 +1,404 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getFacultyById } from '../../lib/faculty';
+import { marked } from 'marked';
+
+const { id } = Astro.params;
+
+if (!id) {
+    return Astro.redirect('/faculty');
+}
+
+// Parse ID as number
+const facultyId = parseInt(id, 10);
+
+if (isNaN(facultyId)) {
+    return Astro.redirect('/faculty');
+}
+
+// Fetch faculty member
+let faculty;
+let error = null;
+
+try {
+    faculty = await getFacultyById(facultyId);
+
+    if (!faculty) {
+        return Astro.redirect('/404');
+    }
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load faculty profile';
+}
+
+// Parse markdown content for biography, publications, etc.
+const biographyHtml = faculty?.biography ? marked(faculty.biography) : '';
+const publicationsHtml = faculty?.publications ? marked(faculty.publications) : '';
+const projectsHtml = faculty?.projects ? marked(faculty.projects) : '';
+const awardsHtml = faculty?.awards ? marked(faculty.awards) : '';
+
+// Breadcrumb items
+const breadcrumbItems = [{ label: '首页', url: '/' }, { label: '师资队伍', url: '/faculty' }, { label: faculty?.name || '教师详情' }];
+---
+
+<BaseLayout
+    title={faculty ? `${faculty.name} - 北京信息科技大学计算机学院` : '教师详情'}
+    description={faculty ? `${faculty.name}，${faculty.title}，研究方向：${faculty.researchInterests?.join('、') || ''}` : '查看教师详情'}
+    keywords={faculty ? `${faculty.name},${faculty.title},${faculty.researchInterests?.join(',') || ''}` : '教师,师资'}
+>
+    <div class="faculty-detail-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            {
+                error ? (
+                    <div class="error-message">
+                        <p>加载教师信息时出错：{error}</p>
+                    </div>
+                ) : (
+                    faculty && (
+                        <article class="faculty-profile">
+                            <div class="faculty-profile-header">
+                                <div class="faculty-photo-large">
+                                    {faculty.photoUrl ? (
+                                        <img src={faculty.photoUrl} alt={faculty.name} />
+                                    ) : (
+                                        <div class="faculty-photo-placeholder">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div class="faculty-header-info">
+                                    <h1 class="faculty-name">{faculty.name}</h1>
+                                    {faculty.nameEn && <p class="faculty-name-en">{faculty.nameEn}</p>}
+                                    <p class="faculty-title">{faculty.title}</p>
+
+                                    <div class="faculty-contact">
+                                        {faculty.email && (
+                                            <div class="contact-item">
+                                                <strong>邮箱：</strong>
+                                                <a href={`mailto:${faculty.email}`}>{faculty.email}</a>
+                                            </div>
+                                        )}
+                                        {faculty.phone && (
+                                            <div class="contact-item">
+                                                <strong>电话：</strong>
+                                                <span>{faculty.phone}</span>
+                                            </div>
+                                        )}
+                                        {faculty.office && (
+                                            <div class="contact-item">
+                                                <strong>办公室：</strong>
+                                                <span>{faculty.office}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {faculty.researchInterests && faculty.researchInterests.length > 0 && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">研究方向</h2>
+                                    <div class="research-interests">
+                                        {faculty.researchInterests.map((interest) => (
+                                            <span class="research-tag">{interest}</span>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {faculty.education && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">教育背景</h2>
+                                    <div class="section-content">{faculty.education}</div>
+                                </section>
+                            )}
+
+                            {biographyHtml && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">个人简介</h2>
+                                    <div class="section-content" set:html={biographyHtml} />
+                                </section>
+                            )}
+
+                            {publicationsHtml && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">主要论文</h2>
+                                    <div class="section-content" set:html={publicationsHtml} />
+                                </section>
+                            )}
+
+                            {projectsHtml && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">科研项目</h2>
+                                    <div class="section-content" set:html={projectsHtml} />
+                                </section>
+                            )}
+
+                            {awardsHtml && (
+                                <section class="faculty-section">
+                                    <h2 class="section-title">获奖情况</h2>
+                                    <div class="section-content" set:html={awardsHtml} />
+                                </section>
+                            )}
+
+                            <div class="faculty-actions">
+                                <a href="/faculty" class="back-link">
+                                    ← 返回师资队伍
+                                </a>
+                            </div>
+                        </article>
+                    )
+                )
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .faculty-detail-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .faculty-profile {
+        background: var(--background);
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .faculty-profile-header {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 2.5rem;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .faculty-photo-large {
+        width: 240px;
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--background-alt);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .faculty-photo-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .faculty-photo-placeholder {
+        width: 100px;
+        height: 100px;
+        color: var(--text-secondary);
+        opacity: 0.3;
+    }
+
+    .faculty-photo-placeholder svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .faculty-header-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .faculty-name {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .faculty-name-en {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin: 0 0 1rem 0;
+        font-style: italic;
+    }
+
+    .faculty-title {
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .faculty-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .contact-item {
+        font-size: 1rem;
+        color: var(--text-primary);
+    }
+
+    .contact-item strong {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+
+    .contact-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .contact-item a:hover {
+        text-decoration: underline;
+    }
+
+    .faculty-section {
+        margin: 2.5rem 0;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1.5rem 0;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    .research-interests {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .research-tag {
+        padding: 0.5rem 1rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .section-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: var(--text-primary);
+    }
+
+    .section-content :global(p) {
+        margin: 1rem 0;
+    }
+
+    .section-content :global(ul),
+    .section-content :global(ol) {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+
+    .section-content :global(li) {
+        margin: 0.5rem 0;
+    }
+
+    .section-content :global(h3) {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        color: var(--text-primary);
+    }
+
+    .faculty-actions {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+        color: var(--secondary-color);
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+        margin-top: 2rem;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .faculty-profile {
+            padding: 1.5rem;
+        }
+
+        .faculty-profile-header {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .faculty-photo-large {
+            width: 100%;
+            max-width: 240px;
+            margin: 0 auto;
+        }
+
+        .faculty-header-info {
+            text-align: center;
+        }
+
+        .faculty-name {
+            font-size: 1.75rem;
+        }
+
+        .faculty-name-en {
+            font-size: 1.1rem;
+        }
+
+        .faculty-title {
+            font-size: 1.1rem;
+        }
+
+        .faculty-contact {
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+        }
+
+        .section-content {
+            font-size: 1rem;
+        }
+    }
+</style>

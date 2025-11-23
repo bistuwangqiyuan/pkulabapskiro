@@ -1,0 +1,492 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCourses, getLaboratories, getResources } from '../../lib/teaching';
+
+// Fetch teaching data
+let courses: Awaited<ReturnType<typeof getCourses>> = [];
+let laboratories: Awaited<ReturnType<typeof getLaboratories>> = [];
+let resources: Awaited<ReturnType<typeof getResources>> = [];
+let error = null;
+
+try {
+    [courses, laboratories, resources] = await Promise.all([
+        getCourses(),
+        getLaboratories(),
+        getResources()
+    ]);
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load teaching content';
+}
+
+// Breadcrumb items
+const breadcrumbItems = [
+    { label: '首页', url: '/' },
+    { label: '实验教学' }
+];
+---
+
+<BaseLayout
+    title="实验教学 - 北京信息科技大学计算机学院"
+    description="查看北京信息科技大学计算机学院的实验教学课程、实验室设施和教学资源"
+    keywords="实验教学,课程,实验室,教学资源,BISTU计算机学院"
+>
+    <div class="teaching-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            <div class="teaching-page-header">
+                <h1>实验教学</h1>
+                <p class="teaching-page-description">探索我院的实验课程、实验室设施和教学资源</p>
+            </div>
+
+            {error ? (
+                <div class="error-message">
+                    <p>加载教学内容时出错：{error}</p>
+                </div>
+            ) : (
+                <div class="teaching-content">
+                    <!-- Courses Section -->
+                    <section class="teaching-section">
+                        <h2 class="section-title">实验课程</h2>
+                        {courses.length > 0 ? (
+                            <div class="courses-grid">
+                                {courses.map((course) => (
+                                    <div class="course-card">
+                                        <h3 class="course-name">{course.name}</h3>
+                                        <div class="course-meta">
+                                            <span class="course-instructor">
+                                                <strong>授课教师：</strong>{course.instructor}
+                                            </span>
+                                            {course.credits && (
+                                                <span class="course-credits">
+                                                    <strong>学分：</strong>{course.credits}
+                                                </span>
+                                            )}
+                                            {course.semester && (
+                                                <span class="course-semester">
+                                                    <strong>学期：</strong>{course.semester}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p class="course-description">{course.description}</p>
+                                        <div class="course-schedule">
+                                            <strong>课程安排：</strong>
+                                            <p>{course.schedule}</p>
+                                        </div>
+                                        {course.prerequisites && (
+                                            <div class="course-prerequisites">
+                                                <strong>先修课程：</strong>
+                                                <p>{course.prerequisites}</p>
+                                            </div>
+                                        )}
+                                        {course.objectives && (
+                                            <div class="course-objectives">
+                                                <strong>课程目标：</strong>
+                                                <p>{course.objectives}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p class="empty-message">暂无课程信息</p>
+                        )}
+                    </section>
+
+                    <!-- Laboratories Section -->
+                    <section class="teaching-section">
+                        <h2 class="section-title">实验室设施</h2>
+                        {laboratories.length > 0 ? (
+                            <div class="labs-grid">
+                                {laboratories.map((lab) => (
+                                    <div class="lab-card">
+                                        <h3 class="lab-name">{lab.name}</h3>
+                                        <div class="lab-info">
+                                            <div class="lab-info-item">
+                                                <strong>地点：</strong>
+                                                <span>{lab.location}</span>
+                                            </div>
+                                            <div class="lab-info-item">
+                                                <strong>开放时间：</strong>
+                                                <span>{lab.openingHours}</span>
+                                            </div>
+                                            {lab.capacity && (
+                                                <div class="lab-info-item">
+                                                    <strong>容量：</strong>
+                                                    <span>{lab.capacity}人</span>
+                                                </div>
+                                            )}
+                                            {lab.manager && (
+                                                <div class="lab-info-item">
+                                                    <strong>负责人：</strong>
+                                                    <span>{lab.manager}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {lab.description && (
+                                            <p class="lab-description">{lab.description}</p>
+                                        )}
+                                        <div class="lab-equipment">
+                                            <strong>设备配置：</strong>
+                                            <p>{lab.equipment}</p>
+                                        </div>
+                                        {lab.contactInfo && (
+                                            <div class="lab-contact">
+                                                <strong>联系方式：</strong>
+                                                <p>{lab.contactInfo}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p class="empty-message">暂无实验室信息</p>
+                        )}
+                    </section>
+
+                    <!-- Resources Section -->
+                    <section class="teaching-section">
+                        <h2 class="section-title">教学资源</h2>
+                        {resources.length > 0 ? (
+                            <div class="resources-list">
+                                {resources.map((resource) => (
+                                    <div class="resource-item">
+                                        <div class="resource-info">
+                                            <h3 class="resource-title">{resource.title}</h3>
+                                            {resource.description && (
+                                                <p class="resource-description">{resource.description}</p>
+                                            )}
+                                            <div class="resource-meta">
+                                                {resource.fileType && (
+                                                    <span class="resource-type">{resource.fileType.toUpperCase()}</span>
+                                                )}
+                                                {resource.fileSize && (
+                                                    <span class="resource-size">{resource.fileSize}</span>
+                                                )}
+                                                {resource.category && (
+                                                    <span class="resource-category">{resource.category}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <a href={resource.downloadUrl} class="resource-download" download>
+                                            下载
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p class="empty-message">暂无教学资源</p>
+                        )}
+                    </section>
+                </div>
+            )}
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .teaching-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .teaching-page-header {
+        margin: 2rem 0 3rem 0;
+        text-align: center;
+    }
+
+    .teaching-page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    .teaching-page-description {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .teaching-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4rem;
+    }
+
+    .teaching-section {
+        width: 100%;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 2rem 0;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-color, #0066cc);
+    }
+
+    /* Courses Styles */
+    .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .course-card {
+        background: white;
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .course-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    .course-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .course-description {
+        color: var(--text-primary);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .course-schedule,
+    .course-prerequisites,
+    .course-objectives {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .course-schedule strong,
+    .course-prerequisites strong,
+    .course-objectives strong {
+        color: var(--text-primary);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .course-schedule p,
+    .course-prerequisites p,
+    .course-objectives p {
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Laboratories Styles */
+    .labs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+
+    .lab-card {
+        background: white;
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .lab-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .lab-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    .lab-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .lab-info-item {
+        font-size: 0.9rem;
+    }
+
+    .lab-info-item strong {
+        color: var(--text-primary);
+        margin-right: 0.5rem;
+    }
+
+    .lab-info-item span {
+        color: var(--text-secondary);
+    }
+
+    .lab-description {
+        color: var(--text-primary);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .lab-equipment,
+    .lab-contact {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .lab-equipment strong,
+    .lab-contact strong {
+        color: var(--text-primary);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .lab-equipment p,
+    .lab-contact p {
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Resources Styles */
+    .resources-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .resource-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .resource-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .resource-info {
+        flex: 1;
+    }
+
+    .resource-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .resource-description {
+        color: var(--text-secondary);
+        margin: 0 0 0.75rem 0;
+        line-height: 1.6;
+    }
+
+    .resource-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .resource-type,
+    .resource-size,
+    .resource-category {
+        padding: 0.25rem 0.75rem;
+        background: var(--background-alt, #f5f5f5);
+        border-radius: 4px;
+        color: var(--text-secondary);
+    }
+
+    .resource-download {
+        padding: 0.75rem 2rem;
+        background: var(--primary-color, #0066cc);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .resource-download:hover {
+        background: var(--secondary-color, #003d7a);
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .teaching-page {
+            padding: 1rem 0;
+        }
+
+        .teaching-page-header h1 {
+            font-size: 2rem;
+        }
+
+        .teaching-page-description {
+            font-size: 1rem;
+        }
+
+        .courses-grid,
+        .labs-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .resource-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .resource-download {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>

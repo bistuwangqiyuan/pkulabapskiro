@@ -96,7 +96,7 @@
   - Define reusable utility classes
   - _Requirements: 2.1, 2.2, 2.5_
 
-- [-] 4. Implement news functionality
+- [x] 4. Implement news functionality
 
 - [x] 4.1 Create news data access layer
 
@@ -110,174 +110,174 @@
   - **Property 6: News retrieval consistency**
   - **Validates: Requirements 4.3**
 
-- [-] 4.3 Write property test for news ordering
+- [x] 4.3 Write property test for news ordering
 
   - **Property 7: News chronological ordering**
   - **Validates: Requirements 4.4**
 
-- [ ] 4.4 Create NewsCard component
+- [x] 4.4 Create NewsCard component
 
   - Implement NewsCard.astro to display news summary
   - Show title, date, thumbnail, and excerpt
   - _Requirements: 4.1_
 
-- [ ] 4.5 Create NewsList component with pagination
+- [x] 4.5 Create NewsList component with pagination
 
   - Implement NewsList.astro to display news grid
   - Add Pagination component
   - _Requirements: 4.1, 4.4, 4.5_
 
-- [ ] 4.6 Create news index page
+- [x] 4.6 Create news index page
 
   - Implement src/pages/news/index.astro
   - Fetch and display paginated news list
   - _Requirements: 4.1, 4.4, 4.5_
 
-- [ ] 4.7 Create news detail page
+- [x] 4.7 Create news detail page
 
   - Implement src/pages/news/[slug].astro
   - Fetch and display full news article
   - Increment view count
   - _Requirements: 4.2_
 
-- [ ] 4.8 Write unit tests for news pages
+- [x] 4.8 Write unit tests for news pages
 
   - Test news list rendering
   - Test news detail rendering
   - Test pagination logic
   - _Requirements: 4.1, 4.2, 4.4, 4.5_
 
-- [ ] 5. Implement faculty functionality
+- [x] 5. Implement faculty functionality
 
-- [ ] 5.1 Create faculty data access layer
+- [x] 5.1 Create faculty data access layer
 
   - Implement src/lib/faculty.ts with CRUD functions
   - Add getFacultyList, getFacultyById, searchFaculty
   - Implement category filtering and search
   - _Requirements: 5.3, 5.4, 5.5_
 
-- [ ] 5.2 Write property test for faculty retrieval
+- [x] 5.2 Write property test for faculty retrieval
 
   - **Property 8: Faculty data retrieval consistency**
   - **Validates: Requirements 5.3**
 
-- [ ] 5.3 Write property test for faculty categorization
+- [x] 5.3 Write property test for faculty categorization
 
   - **Property 9: Faculty categorization**
   - **Validates: Requirements 5.4**
 
-- [ ] 5.4 Write property test for faculty search
+- [x] 5.4 Write property test for faculty search
 
   - **Property 10: Faculty search filtering**
   - **Validates: Requirements 5.5**
 
-- [ ] 5.5 Create FacultyCard component
+- [x] 5.5 Create FacultyCard component
 
   - Implement FacultyCard.astro to display faculty member
   - Show photo, name, title, and research interests
   - _Requirements: 5.1_
 
-- [ ] 5.6 Create FacultyGrid component
+- [x] 5.6 Create FacultyGrid component
 
   - Implement FacultyGrid.astro for grid layout
   - Support category filtering
   - _Requirements: 5.1, 5.4_
 
-- [ ] 5.7 Create faculty index page
+- [x] 5.7 Create faculty index page
 
   - Implement src/pages/faculty/index.astro
   - Display faculty grid with category tabs
   - Add search functionality
   - _Requirements: 5.1, 5.4, 5.5_
 
-- [ ] 5.8 Create faculty detail page
+- [x] 5.8 Create faculty detail page
 
   - Implement src/pages/faculty/[id].astro
   - Display full faculty profile
   - _Requirements: 5.2_
 
-- [ ] 5.9 Write unit tests for faculty pages
+- [x] 5.9 Write unit tests for faculty pages
 
   - Test faculty list rendering
   - Test faculty detail rendering
   - Test search and filter functionality
   - _Requirements: 5.1, 5.2, 5.4, 5.5_
 
-- [ ] 6. Implement page content management
+- [x] 6. Implement page content management
 
-- [ ] 6.1 Create page content data access layer
+- [x] 6.1 Create page content data access layer
 
   - Implement src/lib/content.ts with functions
   - Add getPageContent, updatePageContent
   - _Requirements: 3.3, 3.4_
 
-- [ ] 6.2 Write property test for content storage
+- [x] 6.2 Write property test for content storage
 
   - **Property 4: Content storage round trip**
   - **Validates: Requirements 3.3**
 
-- [ ] 6.3 Write property test for content rendering
+- [x] 6.3 Write property test for content rendering
 
   - **Property 5: Content retrieval and rendering**
   - **Validates: Requirements 3.4**
 
-- [ ] 6.4 Create MarkdownRenderer component
+- [x] 6.4 Create MarkdownRenderer component
 
   - Implement MarkdownRenderer.astro using marked
   - Add syntax highlighting with marked-shiki
   - _Requirements: 3.4_
 
-- [ ] 6.5 Create dynamic content pages
+- [x] 6.5 Create dynamic content pages
 
   - Implement src/pages/[...slug].astro for dynamic routes
   - Fetch content from database based on slug
   - Render with sidebar if applicable
   - _Requirements: 3.4_
 
-- [ ] 7. Implement experimental teaching section
+- [x] 7. Implement experimental teaching section
 
-- [ ] 7.1 Create teaching content data access layer
+- [x] 7.1 Create teaching content data access layer
 
   - Implement src/lib/teaching.ts with functions
   - Add getCourses, getLaboratories, getResources
   - _Requirements: 6.2_
 
-- [ ] 7.2 Write property test for teaching content retrieval
+- [x] 7.2 Write property test for teaching content retrieval
 
   - **Property 11: Teaching content retrieval**
   - **Validates: Requirements 6.2**
 
-- [ ] 7.3 Write property test for course information completeness
+- [x] 7.3 Write property test for course information completeness
 
   - **Property 12: Course information completeness**
   - **Validates: Requirements 6.3**
 
-- [ ] 7.4 Write property test for laboratory information completeness
+- [x] 7.4 Write property test for laboratory information completeness
 
   - **Property 13: Laboratory information completeness**
   - **Validates: Requirements 6.4**
 
-- [ ] 7.5 Create experimental teaching pages
+- [x] 7.5 Create experimental teaching pages
 
   - Implement src/pages/teaching/index.astro
   - Display courses, labs, and resources
   - _Requirements: 6.1, 6.3, 6.4_
 
-- [ ] 7.6 Write property test for resource download availability
+- [x] 7.6 Write property test for resource download availability
 
   - **Property 14: Resource download availability**
   - **Validates: Requirements 6.5**
 
-- [ ] 7.7 Write unit tests for teaching pages
+- [x] 7.7 Write unit tests for teaching pages
 
   - Test course display
   - Test laboratory information display
   - Test resource links
   - _Requirements: 6.1, 6.3, 6.4, 6.5_
 
-- [ ] 8. Implement homepage
+- [x] 8. Implement homepage
 
-- [ ] 8.1 Create homepage layout
+- [x] 8.1 Create homepage layout
 
   - Implement src/pages/index.astro
   - Add hero section with banner image
@@ -285,57 +285,57 @@
   - Add quick links and highlights
   - _Requirements: 1.1, 4.1_
 
-- [ ] 8.2 Write unit tests for homepage
+- [x] 8.2 Write unit tests for homepage
 
   - Test news display on homepage
   - Test navigation menu presence
   - Test responsive layout
   - _Requirements: 1.1, 4.1_
 
-- [ ] 9. Implement utility components
+- [x] 9. Implement utility components
 
-- [ ] 9.1 Create ImageOptimizer component
+- [x] 9.1 Create ImageOptimizer component
 
   - Implement ImageOptimizer.astro with Astro Image
   - Support responsive images and lazy loading
   - _Requirements: 8.3, 8.4_
 
-- [ ] 9.2 Write property test for image optimization
+- [x] 9.2 Write property test for image optimization
 
   - **Property 15: Image optimization**
   - **Validates: Requirements 8.3**
 
-- [ ] 9.3 Write property test for image lazy loading
+- [x] 9.3 Write property test for image lazy loading
 
   - **Property 16: Image lazy loading**
   - **Validates: Requirements 8.4**
 
-- [ ] 9.4 Create Pagination component
+- [x] 9.4 Create Pagination component
 
   - Implement Pagination.astro for page navigation
   - Support prev/next and page numbers
   - _Requirements: 4.5_
 
-- [ ] 10. Implement API endpoints
+- [-] 10. Implement API endpoints
 
-- [ ] 10.1 Create news API endpoints
+- [x] 10.1 Create news API endpoints
 
   - Implement src/pages/api/news/index.ts (GET, POST)
   - Implement src/pages/api/news/[id].ts (GET, PUT, DELETE)
   - Add input validation
   - _Requirements: 10.1, 10.4, 10.5_
 
-- [ ] 10.2 Write property test for API input validation
+- [x] 10.2 Write property test for API input validation
 
   - **Property 21: API input validation**
   - **Validates: Requirements 10.4**
 
-- [ ] 10.3 Write property test for API response correctness
+- [x] 10.3 Write property test for API response correctness
 
   - **Property 22: API response correctness**
   - **Validates: Requirements 10.5**
 
-- [ ] 10.4 Create faculty API endpoints
+- [x] 10.4 Create faculty API endpoints
 
   - Implement src/pages/api/faculty/index.ts (GET, POST)
   - Implement src/pages/api/faculty/[id].ts (GET, PUT, DELETE)
@@ -362,29 +362,29 @@
   - Test error responses
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 11. Implement accessibility features
+- [-] 11. Implement accessibility features
 
-- [ ] 11.1 Write property test for semantic HTML
+- [x] 11.1 Write property test for semantic HTML
 
   - **Property 17: Semantic HTML usage**
   - **Validates: Requirements 9.1**
 
-- [ ] 11.2 Write property test for image alt text
+- [x] 11.2 Write property test for image alt text
 
   - **Property 18: Image alt text presence**
   - **Validates: Requirements 9.2**
 
-- [ ] 11.3 Write property test for keyboard navigation
+- [x] 11.3 Write property test for keyboard navigation
 
   - **Property 19: Keyboard navigation support**
   - **Validates: Requirements 9.4**
 
-- [ ] 11.4 Write property test for ARIA labels
+- [x] 11.4 Write property test for ARIA labels
 
   - **Property 20: ARIA label presence**
   - **Validates: Requirements 9.5**
 
-- [ ] 11.5 Add skip-to-content link
+- [x] 11.5 Add skip-to-content link
 
   - Implement skip link for keyboard users
   - Style for visibility on focus

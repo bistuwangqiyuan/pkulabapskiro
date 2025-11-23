@@ -81,3 +81,64 @@ CREATE TABLE IF NOT EXISTS navigation (
 -- Indexes for navigation table
 CREATE INDEX IF NOT EXISTS idx_navigation_parent ON navigation(parent_id);
 CREATE INDEX IF NOT EXISTS idx_navigation_sort_order ON navigation(sort_order);
+
+-- Courses table: stores experimental teaching course information
+CREATE TABLE IF NOT EXISTS courses (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    schedule TEXT NOT NULL,
+    instructor VARCHAR(100) NOT NULL,
+    credits INTEGER,
+    semester VARCHAR(50),
+    prerequisites TEXT,
+    objectives TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_visible BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index for courses table
+CREATE INDEX IF NOT EXISTS idx_courses_sort_order ON courses(sort_order);
+
+-- Laboratories table: stores laboratory facility information
+CREATE TABLE IF NOT EXISTS laboratories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    location TEXT NOT NULL,
+    equipment TEXT NOT NULL,
+    opening_hours TEXT NOT NULL,
+    capacity INTEGER,
+    description TEXT,
+    manager VARCHAR(100),
+    contact_info TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_visible BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index for laboratories table
+CREATE INDEX IF NOT EXISTS idx_laboratories_sort_order ON laboratories(sort_order);
+
+-- Resources table: stores downloadable teaching resources
+CREATE TABLE IF NOT EXISTS resources (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    download_url TEXT NOT NULL,
+    file_type VARCHAR(50),
+    file_size VARCHAR(50),
+    category VARCHAR(100),
+    course_id INTEGER REFERENCES courses(id) ON DELETE SET NULL,
+    sort_order INTEGER DEFAULT 0,
+    is_visible BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for resources table
+CREATE INDEX IF NOT EXISTS idx_resources_category ON resources(category);
+CREATE INDEX IF NOT EXISTS idx_resources_course_id ON resources(course_id);
+CREATE INDEX IF NOT EXISTS idx_resources_sort_order ON resources(sort_order);

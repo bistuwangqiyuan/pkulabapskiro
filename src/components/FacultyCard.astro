@@ -1,0 +1,144 @@
+---
+import type { FacultyMember } from '../types';
+
+interface Props {
+    faculty: FacultyMember;
+}
+
+const { faculty } = Astro.props;
+---
+
+<article class="faculty-card">
+    <a href={`/faculty/${faculty.id}`} class="faculty-card-link">
+        <div class="faculty-card-photo">
+            {
+                faculty.photoUrl ? (
+                    <img src={faculty.photoUrl} alt={faculty.name} loading="lazy" />
+                ) : (
+                    <div class="faculty-card-photo-placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                )
+            }
+        </div>
+        <div class="faculty-card-content">
+            <h3 class="faculty-card-name">{faculty.name}</h3>
+            {faculty.nameEn && <p class="faculty-card-name-en">{faculty.nameEn}</p>}
+            <p class="faculty-card-title">{faculty.title}</p>
+            {
+                faculty.researchInterests && faculty.researchInterests.length > 0 && (
+                    <div class="faculty-card-research">
+                        <strong>研究方向：</strong>
+                        <span>{faculty.researchInterests.join('、')}</span>
+                    </div>
+                )
+            }
+        </div>
+    </a>
+</article>
+
+<style>
+    .faculty-card {
+        background: var(--background);
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 8px;
+        overflow: hidden;
+        transition:
+            box-shadow 0.3s ease,
+            transform 0.3s ease;
+        height: 100%;
+    }
+
+    .faculty-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .faculty-card-link {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+        height: 100%;
+    }
+
+    .faculty-card-photo {
+        width: 100%;
+        height: 240px;
+        overflow: hidden;
+        background: var(--background-alt, #f5f5f5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .faculty-card-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .faculty-card-photo-placeholder {
+        width: 80px;
+        height: 80px;
+        color: var(--text-secondary, #666);
+        opacity: 0.3;
+    }
+
+    .faculty-card-photo-placeholder svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .faculty-card-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .faculty-card-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem 0;
+        color: var(--text-primary, #333);
+        line-height: 1.4;
+    }
+
+    .faculty-card-name-en {
+        font-size: 0.9rem;
+        color: var(--text-secondary, #666);
+        margin: 0 0 0.5rem 0;
+        font-style: italic;
+    }
+
+    .faculty-card-title {
+        font-size: 1rem;
+        color: var(--primary-color, #0066cc);
+        margin: 0 0 1rem 0;
+        font-weight: 500;
+    }
+
+    .faculty-card-research {
+        font-size: 0.875rem;
+        color: var(--text-secondary, #666);
+        line-height: 1.6;
+        margin-top: auto;
+    }
+
+    .faculty-card-research strong {
+        color: var(--text-primary, #333);
+        font-weight: 600;
+    }
+
+    .faculty-card-research span {
+        display: block;
+        margin-top: 0.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>

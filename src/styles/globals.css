@@ -3,9 +3,11 @@
 @theme {
     /* BISTU Theme - Typography */
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
 
-    /* BISTU Theme - Colors */
+    /* BISTU Theme - Brand Colors */
     --color-primary: #0066cc;
+    --color-primary-dark: #003d7a;
     --color-secondary: #003d7a;
     --color-accent: #ff6600;
     --color-primary-content: #ffffff;
@@ -13,10 +15,13 @@
     /* Text Colors */
     --color-text-primary: #333333;
     --color-text-secondary: #666666;
+    --color-text: #333333;
 
     /* Background Colors */
     --color-background: #ffffff;
     --color-background-alt: #f5f5f5;
+    --color-bg: #ffffff;
+    --color-bg-alt: #f5f5f5;
 
     /* Border Colors */
     --color-border: #e0e0e0;
@@ -25,19 +30,42 @@
     --color-success: #28a745;
     --color-warning: #ffc107;
     --color-error: #dc3545;
+    --color-info: #17a2b8;
 
-    /* Responsive Breakpoints */
+    /* Responsive Breakpoints - Tailwind CSS 4.x format */
     --breakpoint-sm: 640px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 1024px;
     --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
 
     /* Typography Scale */
     --font-size-base: 16px;
+    --font-size-sm: 14px;
     --font-size-lg: 18px;
     --font-size-xl: 24px;
     --font-size-2xl: 32px;
+    --font-size-3xl: 40px;
     --line-height-base: 1.6;
+    --line-height-tight: 1.25;
+    --line-height-relaxed: 1.75;
+
+    /* Spacing - Container */
+    --container-max-width: 1200px;
+    --container-padding: 1rem;
+
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius: 0.5rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
     /* Background Image (optional) */
     --background-image-noise: linear-gradient(
@@ -56,28 +84,42 @@
     }
 
     body {
-        @apply text-[var(--color-text-primary)] bg-[var(--color-background)];
         font-family: var(--font-sans);
+        color: var(--color-text-primary);
+        background-color: var(--color-background);
     }
 
     /* Typography */
     h1 {
         @apply text-4xl font-bold tracking-tight sm:text-5xl;
         color: var(--color-text-primary);
+        line-height: var(--line-height-tight);
     }
 
     h2 {
         @apply text-2xl font-bold sm:text-3xl;
         color: var(--color-text-primary);
+        line-height: var(--line-height-tight);
     }
 
     h3 {
         @apply text-xl font-bold sm:text-2xl;
         color: var(--color-text-primary);
+        line-height: var(--line-height-tight);
     }
 
     h4 {
         @apply text-lg font-semibold;
+        color: var(--color-text-primary);
+    }
+
+    h5 {
+        @apply text-base font-semibold;
+        color: var(--color-text-primary);
+    }
+
+    h6 {
+        @apply text-sm font-semibold;
         color: var(--color-text-primary);
     }
 
@@ -88,7 +130,7 @@
 
     /* Links */
     a:not(.btn) {
-        @apply underline transition hover:opacity-80;
+        @apply underline transition-colors duration-200 hover:opacity-80;
         color: var(--color-primary);
     }
 
@@ -96,17 +138,72 @@
         color: var(--color-secondary);
     }
 
+    a:not(.btn):focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+        @apply pl-6;
+    }
+
+    ul {
+        @apply list-disc;
+    }
+
+    ol {
+        @apply list-decimal;
+    }
+
+    li {
+        @apply mb-2;
+    }
+
     /* Code Blocks */
     pre {
-        @apply p-6 overflow-x-auto rounded-lg;
+        @apply p-6 overflow-x-auto;
         background-color: var(--color-background-alt);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
     }
 
     :not(pre) > code {
-        @apply px-1 py-0.5 font-mono rounded;
+        @apply px-1 py-0.5 font-mono;
         background-color: var(--color-background-alt);
         color: var(--color-text-primary);
         font-size: 0.9em;
+        border-radius: var(--radius-sm);
+    }
+
+    /* Tables */
+    table {
+        @apply w-full border-collapse;
+    }
+
+    th {
+        @apply font-semibold text-left p-3;
+        background-color: var(--color-background-alt);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    td {
+        @apply p-3;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Horizontal Rule */
+    hr {
+        @apply my-8;
+        border-color: var(--color-border);
+    }
+
+    /* Blockquote */
+    blockquote {
+        @apply pl-4 border-l-4 italic;
+        border-color: var(--color-primary);
+        color: var(--color-text-secondary);
     }
 }
 
@@ -132,15 +229,21 @@
 
     /* Button Styles - BISTU Theme */
     .btn {
-        @apply inline-flex items-center justify-center gap-2 cursor-pointer text-center font-semibold no-underline transition-colors;
+        @apply inline-flex items-center justify-center gap-2 cursor-pointer text-center font-semibold no-underline transition-colors duration-200;
         background-color: var(--color-primary);
         color: var(--color-primary-content);
         padding: var(--btn-py, 0.875rem) var(--btn-px, 1.25rem);
         font-size: var(--btn-font-size, 0.875rem);
-        border-radius: var(--btn-border-radius, 0.5rem);
+        border-radius: var(--radius);
+        border: none;
 
         &:hover {
             background-color: var(--color-secondary);
+        }
+
+        &:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
 
         &:disabled {
@@ -184,29 +287,59 @@
 
     /* Card Component */
     .card {
-        @apply rounded-lg p-6;
+        @apply p-6;
         background-color: var(--color-background);
         border: 1px solid var(--color-border);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        transition: box-shadow 0.2s ease;
+
+        &:hover {
+            box-shadow: var(--shadow-md);
+        }
+    }
+
+    .card-compact {
+        @apply p-4;
     }
 
     /* Container */
     .container {
-        @apply mx-auto px-4;
-        max-width: 1200px;
+        @apply mx-auto;
+        max-width: var(--container-max-width);
+        padding-left: var(--container-padding);
+        padding-right: var(--container-padding);
+    }
+
+    @media (min-width: 768px) {
+        .container {
+            --container-padding: 1.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .container {
+            --container-padding: 2rem;
+        }
     }
 
     /* Form Elements */
     .form-input {
-        @apply w-full px-3 py-2 rounded border transition-colors;
+        @apply w-full px-3 py-2 border transition-colors duration-200;
         border-color: var(--color-border);
         background-color: var(--color-background);
         color: var(--color-text-primary);
+        border-radius: var(--radius);
 
         &:focus {
             outline: none;
             border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        &:disabled {
+            @apply opacity-50 cursor-not-allowed;
+            background-color: var(--color-background-alt);
         }
     }
 
@@ -215,9 +348,15 @@
         color: var(--color-text-primary);
     }
 
+    .form-error {
+        @apply text-sm mt-1;
+        color: var(--color-error);
+    }
+
     /* Alert/Status Messages */
     .alert {
-        @apply p-4 rounded-lg mb-4;
+        @apply p-4 mb-4;
+        border-radius: var(--radius-lg);
     }
 
     .alert-success {
@@ -236,5 +375,48 @@
         background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
         color: var(--color-error);
         border: 1px solid var(--color-error);
+    }
+
+    .alert-info {
+        background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
+        color: var(--color-info);
+        border: 1px solid var(--color-info);
+    }
+
+    /* Navigation Utilities */
+    .nav-link {
+        @apply no-underline transition-colors duration-200;
+        color: var(--color-text-primary);
+
+        &:hover {
+            color: var(--color-primary);
+        }
+
+        &.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+    }
+
+    /* Skip to Content Link (Accessibility) */
+    .skip-to-content {
+        @apply absolute px-4 py-2 font-semibold no-underline;
+        top: -100px;
+        left: 0;
+        background-color: var(--color-primary);
+        color: var(--color-primary-content);
+        z-index: 100;
+
+        &:focus {
+            top: 0;
+        }
+    }
+
+    /* Focus Visible Utilities */
+    .focus-visible {
+        &:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
     }
 }

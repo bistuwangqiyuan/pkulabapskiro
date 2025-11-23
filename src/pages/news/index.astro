@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsList from '../../components/NewsList.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getNewsList } from '../../lib/news';
+
+// Get page number from query params
+const url = new URL(Astro.request.url);
+const pageParam = url.searchParams.get('page');
+const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+const pageSize = 10;
+
+// Fetch news data
+let newsData;
+let error = null;
+
+try {
+    newsData = await getNewsList(currentPage, pageSize);
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load news';
+    newsData = { items: [], total: 0 };
+}
+
+const totalPages = Math.ceil(newsData.total / pageSize);
+
+// Breadcrumb items
+const breadcrumbItems = [{ label: '首页', url: '/' }, { label: '新闻动态' }];
+---
+
+<BaseLayout
+    title="新闻动态 - 北京信息科技大学计算机学院"
+    description="查看北京信息科技大学计算机学院的最新新闻、通知公告和学院动态"
+    keywords="新闻动态,通知公告,学院新闻,BISTU计算机学院"
+>
+    <div class="news-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            <div class="news-page-header">
+                <h1>新闻动态</h1>
+                <p class="news-page-description">了解学院最新动态、通知公告和重要新闻</p>
+            </div>
+
+            {
+                error ? (
+                    <div class="error-message">
+                        <p>加载新闻时出错：{error}</p>
+                    </div>
+                ) : (
+                    <NewsList news={newsData.items} currentPage={currentPage} totalPages={totalPages} baseUrl="/news" />
+                )
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .news-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .news-page-header {
+        margin: 2rem 0 3rem 0;
+        text-align: center;
+    }
+
+    .news-page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    .news-page-description {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .news-page {
+            padding: 1rem 0;
+        }
+
+        .news-page-header h1 {
+            font-size: 2rem;
+        }
+
+        .news-page-description {
+            font-size: 1rem;
+        }
+    }
+</style>

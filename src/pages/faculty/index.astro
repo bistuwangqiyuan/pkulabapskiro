@@ -1,0 +1,276 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FacultyGrid from '../../components/FacultyGrid.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getFacultyList } from '../../lib/faculty';
+
+// Get category and search query from URL params
+const url = new URL(Astro.request.url);
+const categoryParam = url.searchParams.get('category');
+const searchQuery = url.searchParams.get('search');
+
+// Fetch faculty data
+let facultyData: Awaited<ReturnType<typeof getFacultyList>> = [];
+let error = null;
+
+try {
+    facultyData = await getFacultyList(categoryParam || undefined, searchQuery || undefined);
+} catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load faculty';
+    facultyData = [];
+}
+
+// Group faculty by category for display
+const categories = ['Professor', 'Associate Professor', 'Lecturer', 'Researcher'];
+const groupedFaculty = categories.reduce(
+    (acc, category) => {
+        acc[category] = facultyData.filter((f) => f.category === category);
+        return acc;
+    },
+    {} as Record<string, typeof facultyData>
+);
+
+// If a specific category is selected, only show that category
+const displayCategories = categoryParam ? [categoryParam] : categories;
+
+// Breadcrumb items
+const breadcrumbItems = [{ label: '首页', url: '/' }, { label: '师资队伍' }];
+---
+
+<BaseLayout
+    title="师资队伍 - 北京信息科技大学计算机学院"
+    description="查看北京信息科技大学计算机学院的教师团队，包括教授、副教授、讲师等"
+    keywords="师资队伍,教师团队,教授,副教授,BISTU计算机学院"
+>
+    <div class="faculty-page">
+        <div class="container">
+            <Breadcrumb items={breadcrumbItems} />
+
+            <div class="faculty-page-header">
+                <h1>师资队伍</h1>
+                <p class="faculty-page-description">了解我院优秀的教师团队和研究方向</p>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="faculty-controls">
+                <form class="faculty-search" method="get" action="/faculty">
+                    <input type="text" name="search" placeholder="搜索教师姓名、职称或研究方向..." value={searchQuery || ''} class="search-input" />
+                    <button type="submit" class="search-button">搜索</button>
+                </form>
+
+                <div class="faculty-categories">
+                    <a href="/faculty" class={!categoryParam ? 'category-tab active' : 'category-tab'}>全部</a>
+                    {
+                        categories.map((category) => (
+                            <a
+                                href={`/faculty?category=${encodeURIComponent(category)}`}
+                                class={categoryParam === category ? 'category-tab active' : 'category-tab'}
+                            >
+                                {category}
+                            </a>
+                        ))
+                    }
+                </div>
+            </div>
+
+            {
+                error ? (
+                    <div class="error-message">
+                        <p>加载教师信息时出错：{error}</p>
+                    </div>
+                ) : searchQuery ? (
+                    <div class="faculty-search-results">
+                        <p class="search-results-info">
+                            搜索 "{searchQuery}" 的结果：共 {facultyData.length} 位教师
+                        </p>
+                        <FacultyGrid faculty={facultyData} />
+                    </div>
+                ) : (
+                    <div class="faculty-sections">
+                        {displayCategories.map((category) => {
+                            const categoryFaculty = groupedFaculty[category] || [];
+                            return categoryFaculty.length > 0 ? (
+                                <div class="faculty-section">
+                                    <FacultyGrid faculty={categoryFaculty} category={category} />
+                                </div>
+                            ) : null;
+                        })}
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .faculty-page {
+        padding: 2rem 0;
+        min-height: 60vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .faculty-page-header {
+        margin: 2rem 0 3rem 0;
+        text-align: center;
+    }
+
+    .faculty-page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    .faculty-page-description {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .faculty-controls {
+        margin-bottom: 3rem;
+    }
+
+    .faculty-search {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 4px;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color, #0066cc);
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .search-button {
+        padding: 0.75rem 2rem;
+        background: var(--primary-color, #0066cc);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .search-button:hover {
+        background: var(--secondary-color, #003d7a);
+    }
+
+    .faculty-categories {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .category-tab {
+        padding: 0.75rem 1.5rem;
+        background: var(--background);
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 4px;
+        text-decoration: none;
+        color: var(--text-primary);
+        font-weight: 500;
+        transition:
+            background 0.3s ease,
+            border-color 0.3s ease,
+            color 0.3s ease;
+    }
+
+    .category-tab:hover {
+        background: var(--background-alt, #f5f5f5);
+        border-color: var(--primary-color, #0066cc);
+    }
+
+    .category-tab.active {
+        background: var(--primary-color, #0066cc);
+        color: white;
+        border-color: var(--primary-color, #0066cc);
+    }
+
+    .faculty-search-results {
+        margin-bottom: 2rem;
+    }
+
+    .search-results-info {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .faculty-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 4rem;
+    }
+
+    .faculty-section {
+        width: 100%;
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .error-message p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .faculty-page {
+            padding: 1rem 0;
+        }
+
+        .faculty-page-header h1 {
+            font-size: 2rem;
+        }
+
+        .faculty-page-description {
+            font-size: 1rem;
+        }
+
+        .faculty-search {
+            flex-direction: column;
+        }
+
+        .search-button {
+            width: 100%;
+        }
+
+        .faculty-categories {
+            gap: 0.5rem;
+        }
+
+        .category-tab {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    }
+</style>

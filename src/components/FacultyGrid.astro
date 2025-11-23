@@ -1,0 +1,88 @@
+---
+import FacultyCard from './FacultyCard.astro';
+import type { FacultyMember } from '../types';
+
+interface Props {
+    faculty: FacultyMember[];
+    category?: string;
+}
+
+const { faculty, category } = Astro.props;
+---
+
+<div class="faculty-grid-container">
+    {
+        category && (
+            <div class="faculty-grid-header">
+                <h2>{category}</h2>
+            </div>
+        )
+    }
+
+    {
+        faculty.length === 0 ? (
+            <div class="faculty-grid-empty">
+                <p>暂无教师信息</p>
+            </div>
+        ) : (
+            <div class="faculty-grid">
+                {faculty.map((member) => (
+                    <FacultyCard faculty={member} />
+                ))}
+            </div>
+        )
+    }
+</div>
+
+<style>
+    .faculty-grid-container {
+        width: 100%;
+    }
+
+    .faculty-grid-header {
+        margin-bottom: 2rem;
+    }
+
+    .faculty-grid-header h2 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-primary, #333);
+        margin: 0;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid var(--primary-color, #0066cc);
+    }
+
+    .faculty-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .faculty-grid-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-secondary, #666);
+    }
+
+    .faculty-grid-empty p {
+        font-size: 1.125rem;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .faculty-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .faculty-grid-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .faculty-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>

@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+    src: string | ImageMetadata;
+    alt: string;
+    width?: number;
+    height?: number;
+    loading?: 'lazy' | 'eager';
+    class?: string;
+    sizes?: string;
+    quality?: number;
+}
+
+const { src, alt, width, height, loading = 'lazy', class: className, sizes, quality = 80 } = Astro.props;
+
+// Determine if src is a remote URL or local asset
+const isRemoteUrl = typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'));
+---
+
+{
+    isRemoteUrl ? (
+        <img src={src as string} alt={alt} width={width} height={height} loading={loading} class={className} decoding="async" />
+    ) : (
+        <Image src={src} alt={alt} width={width} height={height} loading={loading} class={className} sizes={sizes} quality={quality} decoding="async" />
+    )
+}
